@@ -27,6 +27,7 @@ public class TokenService {
                     .withIssuer("authorization_hackaton")
                     .withClaim("roles", user.getRoles())
                     .withSubject(user.getUsername())
+                    .withClaim("identier", user.getIdentifier())
                     .withExpiresAt(this.expirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {

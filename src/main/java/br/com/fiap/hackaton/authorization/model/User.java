@@ -27,6 +27,9 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "user_identifier", nullable = false)
+    private String identifier;
+
     @Column(name = "account_non_expired", nullable = false)
     private Boolean accountNonExpired;
 
@@ -104,6 +107,14 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.enabled;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
 }
