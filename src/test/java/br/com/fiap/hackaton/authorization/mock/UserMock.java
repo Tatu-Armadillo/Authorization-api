@@ -9,14 +9,14 @@ public class UserMock {
     public static User mock() {
         final var user = new User(
                 "username",
-                "fullName",
                 "password",
                 false,
                 false,
                 false,
                 false);
         user.setPermissions(List.of(new Permission("DOCTOR"), new Permission("PATIENT")));
+        user.setPerson(PersonMock.mock());
         return user;
     }
-    
+
 }

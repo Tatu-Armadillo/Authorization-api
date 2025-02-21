@@ -1,8 +1,6 @@
 package br.com.fiap.hackaton.authorization.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import jakarta.persistence.*;
 
@@ -20,9 +18,6 @@ public class User implements UserDetails {
 
     @Column(name = "user_name", nullable = false)
     private String username;
-
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -42,6 +37,10 @@ public class User implements UserDetails {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "person_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_user_person"), nullable = false, unique = true)
+    private Person person;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(schema = "hackaton", name = "user_permission", 
         joinColumns = @JoinColumn(name = "id_user", foreignKey = @ForeignKey(name = "fk_user_user_permission")), 
@@ -51,10 +50,9 @@ public class User implements UserDetails {
 
     public User() { }
 
-    public User(String username, String fullName, String password, Boolean accountNonExpired, Boolean accountNonLocked,
+    public User(String username, String password, Boolean accountNonExpired, Boolean accountNonLocked,
             Boolean credentialsNonExpired, Boolean enabled) {
         this.username = username;
-        this.fullName = fullName;
         this.password = password;
         this.accountNonExpired = accountNonExpired;
         this.accountNonLocked = accountNonLocked;
@@ -115,6 +113,14 @@ public class User implements UserDetails {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
 }

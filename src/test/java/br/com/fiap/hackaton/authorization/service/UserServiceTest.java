@@ -17,9 +17,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import br.com.fiap.hackaton.authorization.mock.CreateCredentialsDtoMock;
+import br.com.fiap.hackaton.authorization.mock.PersonMock;
 import br.com.fiap.hackaton.authorization.mock.UserMock;
 import br.com.fiap.hackaton.authorization.model.Permission;
-import br.com.fiap.hackaton.authorization.record.CreateCredentialsDto;
 import br.com.fiap.hackaton.authorization.repository.UserRepository;
 
 class UserServiceTest {
@@ -33,19 +34,22 @@ class UserServiceTest {
     @Mock
     private PermissionService permissionService;
 
+    @Mock
+    private PersonService personService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.userService = new UserService(userRepository, permissionService);
+        this.userService = new UserService(userRepository, permissionService, personService);
     }
 
     @Test
     void whenCreateUserReturnNewUser() {
         when(this.permissionService.getPermission(anyBoolean())).thenReturn(new Permission(""));
+        when(this.personService.save(any())).thenReturn(PersonMock.mock());
         when(this.userRepository.save(any())).thenReturn(UserMock.mock());
 
-        final var response = this.userService
-                .create(new CreateCredentialsDto("username", "fullname", "password", false));
+        final var response = this.userService.create(CreateCredentialsDtoMock.mock());
 
         assertNotNull(response);
     }

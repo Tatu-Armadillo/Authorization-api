@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.fiap.hackaton.authorization.model.User;
 import br.com.fiap.hackaton.authorization.record.CreateCredentialsDto;
+import br.com.fiap.hackaton.authorization.record.PersonDto;
 import br.com.fiap.hackaton.authorization.repository.UserRepository;
 
 @Service
@@ -18,13 +19,16 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PermissionService permissionService;
+    private final PersonService personService;
 
     @Autowired
     public UserService(
             final UserRepository userRepository,
-            final PermissionService permissionService) {
+            final PermissionService permissionService,
+            final PersonService personService) {
         this.userRepository = userRepository;
         this.permissionService = permissionService;
+        this.personService = personService;
     }
 
     @Override
@@ -35,9 +39,9 @@ public class UserService implements UserDetailsService {
 
     public User create(final CreateCredentialsDto data) {
         final var permission = this.permissionService.getPermission(data.isDoctor());
+        final var person = this.personService.save(PersonDto.toEntity(data.person()));
         final var user = new User(
                 data.email(),
-                data.fullName(),
                 data.password(),
                 true,
                 true,
@@ -45,6 +49,7 @@ public class UserService implements UserDetailsService {
                 true);
         user.setIdentifier(UUID.randomUUID().toString());
         user.setPermissions(List.of(permission));
+        user.setPerson(person);
         return this.userRepository.save(user);
     }
 

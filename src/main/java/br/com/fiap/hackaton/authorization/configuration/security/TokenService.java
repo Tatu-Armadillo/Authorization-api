@@ -4,12 +4,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 
 import br.com.fiap.hackaton.authorization.excepetion.BusinessException;
 import br.com.fiap.hackaton.authorization.model.User;
@@ -17,8 +17,12 @@ import br.com.fiap.hackaton.authorization.model.User;
 @Service
 public class TokenService {
 
-    @Value("${api.security.token.secret}")
-    private String secret;
+    private final String secret;
+
+    @Autowired
+    public TokenService(@Value("${api.security.token.secret}") final String secret) {
+        this.secret = secret;
+    }
 
     public String createToken(final User user) {
         try {
@@ -27,10 +31,10 @@ public class TokenService {
                     .withIssuer("authorization_hackaton")
                     .withClaim("roles", user.getRoles())
                     .withSubject(user.getUsername())
-                    .withClaim("identier", user.getIdentifier())
+                    .withClaim("identifier", user.getIdentifier())
                     .withExpiresAt(this.expirationDate())
                     .sign(algorithm);
-        } catch (JWTCreationException exception) {
+        } catch (Exception exception) {
             throw new BusinessException("Error to generate Token JWT");
         }
     }

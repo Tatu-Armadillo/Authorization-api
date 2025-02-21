@@ -46,7 +46,7 @@ public class AuthService {
     public ValidUserCreateDto create(final CreateCredentialsDto data) {
         final var password = passwordEncoder.encode(data.password());
         final var user = this.userService
-                .create(new CreateCredentialsDto(data.email(), data.fullName(), password, data.isDoctor()));
+                .create(new CreateCredentialsDto(data.email(), password, data.isDoctor(), data.person()));
         return ValidUserCreateDto.toRecord(user);
     }
 
